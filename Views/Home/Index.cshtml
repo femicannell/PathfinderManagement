@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="row text-center">
+    <h1 class="display-4">@ViewData["IndexHeader"]</h1>
+    <h5>@ViewData["IndexInfo"]</h5>
+</div>
+
+<div class="row">
+    @foreach (var item in (IEnumerable<string>)ViewData["PathfinderInfo"])
+    {
+        if (item.ToString().Contains("Heading"))
+        {
+            <div class="form-group col-md-12">
+                <h3> @item.ToString().Replace("Heading", "")</h3>
+            </div>
+        }
+        else
+        {
+            <div class="form-group col-md-3 text-left">
+                @item.ToString()
+            </div>
+        }
+    }
+</div>
