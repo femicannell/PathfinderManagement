@@ -1,47 +1,192 @@
-﻿@model IEnumerable<PathfinderManagement.Models.PathfindersDTO>
+﻿@{
+    ViewData["Title"] = "Pathfinders"; }
+<p></p>
+<div id="services">
+    <p></p>
+    <div class="container">
+        <p></p>
+        <hr />
+        <h1>Pathfinders CRUD</h1>
+        <div class="row">
+            <div class="col-md-2, col-lg-2">
+                <h3>Add a Pathfinder</h3>
+                <form action="javascript:void(0);" method="POST" onsubmit="addItem()">
+                    <input class="form-control" type="text" id="add-firstname" placeholder="Add First Name">
+                    <input class="form-control" type="text" id="add-lastname" placeholder="Add Last Name">
+                    <input class="form-control" type="text" id="add-group" placeholder="Add Group">
+                    <input class="form-control" type="text" id="add-counsellor" placeholder="Add Counsellor">
+                    <input type="submit" value="Add">
+                </form>
+                <h3>Edit a Counsellor</h3>
+                <form class="my-form">
+                    <input type="hidden" id="edit-id">
+                    <input class="form-control" type="text" id="edit-firstname">
+                    <input class="form-control" type="text" id="edit-lastname">
+                    <input class="form-control" type="text" id="edit-group">
+                    <input class="form-control" type="text" id="edit-counsellor">
+                    <input type="submit" value="Save">
+                </form>
+            </div>
+            <div class="col-md-2, col-lg-2">
+                <p id="counter"> </p>
+                <table class="table table-striped table-hover">
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Group</th>
+                        <th>Counsellor</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    <tbody id="allPathfinders"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
-@{
-    ViewData["Title"] = "Pathfinders";
+
+@*S C R I P T*@
+
+
+@section Scripts {
+    <script type="text/javascript">
+        //run the LoadTable function when the page has loaded
+        $(document).ready(function () {
+            LoadTable();
+        });
+    </script>
+    <script>
+ //api/CounsellorsAPI
+        const uri = "/api/PathfindersAPI"; //the api as a global variable
+        // alert("API " + uri);
+        let allPathfinders = null; //holds the data in a global
+        //Loads up the <p id="counter"> </p> with a count of the staff, data come from the LoadTable Function where this is called
+        function getCount(data) {
+            // alert("getcount " + datas);
+            const theCount = $("#counter"); //bind TheCount to the counter
+            if (data) { //if any data exists
+                // alert("We have data " + data);
+                theCount.text("There are " + data + " Pathfinders registered in the database");
+            } else {
+                theCount.text("There are no Pathfinders registered in the database");
+                alert("No data");
+            }
+        }
+        //this function reloads the table of staff after any changes
+        function LoadTable() {
+            $.ajax({
+                type: "GET", //use the GET controller
+                url: uri, //the uri from the global
+                cache: false, //don't cache the data in browser reloads, get a fresh copy
+                success: function (data) { //if the request succeeds ....
+                    const tBody = $("#allPathfinders"); //for the tbody bind with allstaff <tbody id="allStaff"></tbody>
+                    allPathfinders = data; //pass in all the data to the global allstaff use it in Edit
+                    $(tBody).empty(); //empty out old data
+                    getCount(data.length); //count for the counter function
+                    //a foreach through the rows creating table data
+                    $.each(data,
+                        function (key, item) {
+                            const tr = $("<tr></tr>")
+                                .append($("<td></td>").text(item.firstname)) //inserts content in the tags
+                                .append($("<td></td>").text(item.lastname))
+                                .append($("<td></td>").text(item.group))
+                                .append($("<td></td>").text(item.counsellor))
+                                .append($("<td></td>")
+                                    .append($("<button>Edit</button>")
+                                        .on("click",
+                                            function () {
+                                                editItem(item.id);
+                                            }) //in the empty cell append in an edititem button
+                                    )
+                                )
+                                .append(
+                                    $("<td></td>")
+                                        .append(
+                                            $("<button>Delete</button>").on("click",
+                                                function () {
+                                                    deleteItem(item.id);
+                                                })//in an empty cell add in a deleteitem button
+                                        )
+                                );
+                            tr.appendTo(tBody);//add all the rows to the tbody
+                        });
+                }
+            });
+        }
+        //Add an person to the database
+        function addItem() {
+            const item = {
+                firstname: $("#add-firstname").val(),
+                lastname: $("#add-lastname").val(),
+                group: $("#add-group").val(),
+                counsellor:$("#add-counsellor").val()
+            };
+            $.ajax({
+                type: "POST", //this calls the POST in the API controller
+                accepts: "application/json",
+                url: uri,
+                contentType: "application/json",
+                data: JSON.stringify(item),
+                //if there is an error
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert("Something went wrong!" + errorThrown);
+                },
+                //if it is successful staff
+                success: function (result) {
+                    LoadTable();
+                    $("#add-firstname").val(""); //clear entry boxes
+                    $("#add-lastname").val("");
+                    $("#add-group").val("");
+                    $("#add-counsellor").val("");
+                    alert("Counsellor added successfully");
+                }
+            });
+        }
+        //Delete a person from the database
+        function deleteItem(id) {
+            $.ajax({
+                url: uri + "/" + id, //add the ID to the end of the URI
+                type: "DELETE", //this calls the DELETE in the API controller
+                success: function (result) {
+                    LoadTable();
+                }
+            });
+        }
+        //click event for edit button to load details into form. Go through each entry held in allStaff and add in the one that matches the id from the click
+        function editItem(id) {
+            $.each(allPathfinders,
+                function (key, item) {
+                    if (item.id === id) {//where the ID == the one on the click
+                        $("#edit-firstname").val(item.firstname); //add it to the form field
+                        $("#edit-id").val(item.id);
+                        $("#edit-lastname").val(item.lastname);
+                        $("#edit-group").val(item.group);
+                        $("#edit-counsellor").val(item.counsellor);;
+                    }
+                });
+        }
+        $(".my-form").on("submit", //saving the edit to the db
+            function () {
+                const item = { //pass all the data on the form to a variable called item use later to send to server
+                    firstname: $("#edit-firstname").val(),
+                    lastname: $("#edit-lastname").val(),
+                    group: $("#edit-group").val(),
+                    counsellor: $("#edit-counsellor").val(),
+                    id: $("#edit-id").val()
+                };
+                alert("Saving ... " + item.id + " " + item.firstname + " " + item.lastname + " " + item.group + " " + item.counsellor);
+                $.ajax({
+                    url: uri + "/" + $("#edit-id").val(), //add the row id to the uri
+                    type: "PUT", //send it to the PUT controller
+                    accepts: "application/json",
+                    contentType: "application/json",
+                    data: JSON.stringify(item), //take the item data and pass it to the serever data is moved to server
+                    success: function (result) {
+                        LoadTable(); //load the table afresh
+                    }
+                });
+                return false;
+            });
+    </script>
 }
-
-<h1>Pathfinders</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FirstName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Group)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Group)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>

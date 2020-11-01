@@ -14,7 +14,7 @@
                     <input class="form-control" type="text" id="add-name" placeholder="Add Name">
                     <input class="form-control" type="text" id="add-rank" placeholder="Add Rank">
                     <input class="form-control" type="text" id="add-group" placeholder="Add Group">
-                    <input class="form-control" type="text" id="add-groupsize" placeholder="Add Group Size">
+                    <input class="form-control" type="number" id="add-groupsize" placeholder="Add Group Size">
                     <input type="submit" value="Add">
                 </form>
                 <h3>Edit a Counsellor</h3>
@@ -23,7 +23,7 @@
                     <input class="form-control" type="text" id="edit-name">
                     <input class="form-control" type="text" id="edit-rank">
                     <input class="form-control" type="text" id="edit-group">
-                    <input class="form-control" type="text" id="edit-groupsize">
+                    <input class="form-control" type="number" id="edit-groupsize">
                     <input type="submit" value="Save">
                 </form>
             </div>
@@ -119,7 +119,7 @@
                 name: $("#add-name").val(),
                 rank: $("#add-rank").val(),
                 group: $("#add-group").val(),
-                groupsize: $("#add-groupsize").val()
+                groupsize: parseInt($("#add-groupsize").val())
             };
             $.ajax({
                 type: "POST", //this calls the POST in the API controller
@@ -171,7 +171,7 @@
                     name: $("#edit-name").val(),
                     rank: $("#edit-rank").val(),
                     group: $("#edit-group").val(),
-                    groupsize: $("#edit-groupsize").val(),
+                    groupsize: parseInt($("#edit-groupsize").val()),
                     id: $("#edit-id").val()
                 };
                 alert("Saving ... " + item.id + " " + item.name + " " + item.rank + " " + item.group + " " + item.groupsize);
