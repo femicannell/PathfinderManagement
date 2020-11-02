@@ -13,7 +13,6 @@ namespace PathfinderManagement.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Group { get; set; }
-        public Counsellors Counsellor { get; set; }
         }
     }
 

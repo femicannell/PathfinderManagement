@@ -14,7 +14,7 @@
                     <input class="form-control" type="text" id="add-name" placeholder="Add Name">
                     <input class="form-control" type="text" id="add-rank" placeholder="Add Rank">
                     <input class="form-control" type="text" id="add-group" placeholder="Add Group">
-                    <input class="form-control" type="number" id="add-groupsize" placeholder="Add Group Size">
+                    <input class="form-control" type="number" id="add-groupSize" placeholder="Add Group Size">
                     <input type="submit" value="Add">
                 </form>
                 <h3>Edit a Counsellor</h3>
@@ -23,7 +23,7 @@
                     <input class="form-control" type="text" id="edit-name">
                     <input class="form-control" type="text" id="edit-rank">
                     <input class="form-control" type="text" id="edit-group">
-                    <input class="form-control" type="number" id="edit-groupsize">
+                    <input class="form-control" type="number" id="edit-groupSize">
                     <input type="submit" value="Save">
                 </form>
             </div>
@@ -89,13 +89,13 @@
                         function (key, item) {
 
 
-                         var size = (item.groupsize).toString();
-
+                         //var size = (item.groupsize).toString();
+                            
                             const tr = $("<tr></tr>")
                                 .append($("<td></td>").text(item.name)) //inserts content in the tags
                                 .append($("<td></td>").text(item.rank))
                                 .append($("<td></td>").text(item.group))
-                                .append($("<td></td>").text(size))
+                                .append($("<td></td>").text(item.groupSize))
                                 .append($("<td></td>")
                                     .append($("<button>Edit</button>")
                                         .on("click",
@@ -124,7 +124,7 @@
                 name: $("#add-name").val(),
                 rank: $("#add-rank").val(),
                 group: $("#add-group").val(),
-                groupsize: parseInt($("#add-groupsize").val())
+                groupSize: parseInt($("#add-groupSize").val())
             };
             $.ajax({
                 type: "POST", //this calls the POST in the API controller
@@ -142,7 +142,7 @@
                     $("#add-name").val(""); //clear entry boxes
                     $("#add-rank").val("");
                     $("#add-group").val("");
-                    $("#add-groupsize").val("");
+                    $("#add-groupSize").val("");
                     alert("Counsellor added successfully");
                 }
             });
@@ -166,7 +166,7 @@
                         $("#edit-id").val(item.id);
                         $("#edit-rank").val(item.rank);
                         $("#edit-group").val(item.group);
-                        $("#edit-groupsize").val(item.groupsize);;
+                        $("#edit-groupSize").val(item.groupSize);;
                     }
                 });
         }
@@ -176,10 +176,10 @@
                     name: $("#edit-name").val(),
                     rank: $("#edit-rank").val(),
                     group: $("#edit-group").val(),
-                    groupsize: parseInt($("#edit-groupsize").val()),
-                    id: $("#edit-id").val()
+                    groupSize: parseInt($("#edit-groupSize").val()),
+                    id: parseInt($("#edit-id").val())
                 };
-                alert("Saving ... " + item.id + " " + item.name + " " + item.rank + " " + item.group + " " + item.groupsize);
+                alert("Saving Data... ID: " + item.id + ", Name: " + item.name + ", Rank: " + item.rank + ", Group: " + item.group + ", Group Size: " + item.groupSize);
                 $.ajax({
                     url: uri + "/" + $("#edit-id").val(), //add the row id to the uri
                     type: "PUT", //send it to the PUT controller

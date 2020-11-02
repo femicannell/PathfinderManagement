@@ -28,7 +28,7 @@ namespace PathfinderManagement.Controllers
                 FirstName = s.FirstName,
                 LastName = s.LastName,
                 Group = s.Group,
-                Counsellor = s.Counsellor
+                //Counsellor = s.Counsellor
             }).ToListAsync();
             //old code
             //await _context.StaffNames.ToListAsync()

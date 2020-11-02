@@ -11,19 +11,17 @@
             <div class="col-md-2, col-lg-2">
                 <h3>Add a Pathfinder</h3>
                 <form action="javascript:void(0);" method="POST" onsubmit="addItem()">
-                    <input class="form-control" type="text" id="add-firstname" placeholder="Add First Name">
-                    <input class="form-control" type="text" id="add-lastname" placeholder="Add Last Name">
+                    <input class="form-control" type="text" id="add-firstName" placeholder="Add First Name">
+                    <input class="form-control" type="text" id="add-lastName" placeholder="Add Last Name">
                     <input class="form-control" type="text" id="add-group" placeholder="Add Group">
-                    <input class="form-control" type="text" id="add-counsellor" placeholder="Add Counsellor">
                     <input type="submit" value="Add">
                 </form>
                 <h3>Edit a Counsellor</h3>
                 <form class="my-form">
                     <input type="hidden" id="edit-id">
-                    <input class="form-control" type="text" id="edit-firstname">
-                    <input class="form-control" type="text" id="edit-lastname">
+                    <input class="form-control" type="text" id="edit-firstName">
+                    <input class="form-control" type="text" id="edit-lastName">
                     <input class="form-control" type="text" id="edit-group">
-                    <input class="form-control" type="text" id="edit-counsellor">
                     <input type="submit" value="Save">
                 </form>
             </div>
@@ -34,7 +32,6 @@
                         <th>First Name</th>
                         <th>Last Name</th>
                         <th>Group</th>
-                        <th>Counsellor</th>
                         <th></th>
                         <th></th>
                     </tr>
@@ -88,16 +85,15 @@
                     $.each(data,
                         function (key, item) {
                             const tr = $("<tr></tr>")
-                                .append($("<td></td>").text(item.firstname)) //inserts content in the tags
-                                .append($("<td></td>").text(item.lastname))
+                                .append($("<td></td>").text(item.firstName)) //inserts content in the tags
+                                .append($("<td></td>").text(item.lastName))
                                 .append($("<td></td>").text(item.group))
-                                .append($("<td></td>").text(item.counsellor))
                                 .append($("<td></td>")
                                     .append($("<button>Edit</button>")
                                         .on("click",
                                             function () {
                                                 editItem(item.id);
-                                            }) //in the empty cell append in an edititem button
+                                            }) //in the empty cell append in an edit item button
                                     )
                                 )
                                 .append(
@@ -117,10 +113,9 @@
         //Add an person to the database
         function addItem() {
             const item = {
-                firstname: $("#add-firstname").val(),
-                lastname: $("#add-lastname").val(),
-                group: $("#add-group").val(),
-                counsellor:$("#add-counsellor").val()
+                FirstName: $("#add-firstName").val(),
+                LastName: $("#add-lastName").val(),
+                Group: $("#add-group").val(),
             };
             $.ajax({
                 type: "POST", //this calls the POST in the API controller
@@ -135,11 +130,10 @@
                 //if it is successful staff
                 success: function (result) {
                     LoadTable();
-                    $("#add-firstname").val(""); //clear entry boxes
-                    $("#add-lastname").val("");
+                    $("#add-firstName").val(""); //clear entry boxes
+                    $("#add-lastName").val("");
                     $("#add-group").val("");
-                    $("#add-counsellor").val("");
-                    alert("Counsellor added successfully");
+                    alert("Pathfinder added successfully");
                 }
             });
         }
@@ -158,24 +152,22 @@
             $.each(allPathfinders,
                 function (key, item) {
                     if (item.id === id) {//where the ID == the one on the click
-                        $("#edit-firstname").val(item.firstname); //add it to the form field
+                        $("#edit-firstName").val(item.firstName); //add it to the form field
                         $("#edit-id").val(item.id);
-                        $("#edit-lastname").val(item.lastname);
-                        $("#edit-group").val(item.group);
-                        $("#edit-counsellor").val(item.counsellor);;
+                        $("#edit-lastName").val(item.lastName);
+                        $("#edit-group").val(item.group);;
                     }
                 });
         }
         $(".my-form").on("submit", //saving the edit to the db
             function () {
                 const item = { //pass all the data on the form to a variable called item use later to send to server
-                    firstname: $("#edit-firstname").val(),
-                    lastname: $("#edit-lastname").val(),
-                    group: $("#edit-group").val(),
-                    counsellor: $("#edit-counsellor").val(),
-                    id: $("#edit-id").val()
+                    FirstName: $("#edit-firstName").val(),
+                    LastName: $("#edit-lastName").val(),
+                    Group: $("#edit-group").val(),
+                    id: parseInt($("#edit-id").val())
                 };
-                alert("Saving ... " + item.id + " " + item.firstname + " " + item.lastname + " " + item.group + " " + item.counsellor);
+                alert("Saving Data... ID: " + item.id + ", Name: " + item.FirstName + " " + item.LastName + ", Group: " + item.Group);
                 $.ajax({
                     url: uri + "/" + $("#edit-id").val(), //add the row id to the uri
                     type: "PUT", //send it to the PUT controller
